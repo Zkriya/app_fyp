@@ -1,0 +1,15 @@
+@(message: String,listOfCheckin: List[Checkin])
+
+
+@main("History") {
+	THIS IS LIST Result page
+	 <h1>@message</h1>
+	 
+	 <ul> 
+	 @for(listOfCheckin <- listOfCheckin){
+		 		<li>@listOfCheckin.locId, at  @listOfCheckin.hour hour
+		 }
+		 
+	</ul>
+
+}

@@ -1,0 +1,57 @@
+@(loginForm: Form[Application.Login])(message:String)
+
+@import helper._
+
+@main("Welcome to Play") {
+	
+	
+	<html>
+	    <head>
+	        <title>Recommender</title>
+	        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+	        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/login.css")">
+	    </head>
+	    
+	    
+	    <body>
+	    @if(loginForm!=null){
+			@if(loginForm.hasGlobalErrors) {
+			    <p class="error">
+			        @loginForm.globalError.message
+			    </p>
+			}
+		}
+		@if(flash.contains("success")) {
+	    <p class="success">
+	        @flash.get("success")
+	    </p>
+	}
+	    @helper.form(action =routes.Application.authenticate) {
+		   <h1>Sign in</h1>
+		   
+			
+		   <p>
+		       <input type="text" name="userId" placeholder="userID">
+		   </p>
+		   <p>
+		       <input type="password" name="password" placeholder="Password">
+		   </p>
+		   
+            <input type="submit" class="btn primary" value="LogIn">
+            <a href="@routes.Application.index" class="btn">Cancel</a>
+		}
+		<br>
+		<br>
+		<form action ="@routes.Application.newUser()" method="post">
+	 		 <button class="btn secondary" name="newuser" type="submit" value="NewUser?">I am a new USER</button>
+		</form>
+		
+		<form action ="@routes.Application.getUser()" method="post">		
+	 		 <button class="btn secondary" name="subject" type="submit" value="return">Get List of User</button>
+		</form>
+		
+		<br>
+	    
+	    </body>
+	</html>
+}

@@ -1,0 +1,14 @@
+@(message: String)(listOfLocation: List[String])
+
+
+@main("Result") {
+	THIS IS LIST Result page
+	 <h1>@message</h1>
+	 
+	 <ul>
+		 @for(listOfLocation <- listOfLocation){
+		 		<li>@listOfLocation
+		 }
+		 
+	</ul>
+}

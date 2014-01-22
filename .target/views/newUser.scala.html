@@ -1,0 +1,40 @@
+@(message: String, userForm: Form[User])
+
+
+@main("Welcome to MyApp") {
+
+	THIS IS Create User Page
+<html>
+    
+    <body>
+   
+        <form action ="@routes.Application.createUser()" method="post">
+        <table>
+			<tr>
+				<td>Name:</td>
+				<td><input name="name" id="name" type="text" id="userBox" maxlength="50" style="width: 157px; " /></td>
+			</tr>
+			<tr>
+				<td>Email:</td>
+				<td><input name="email" type="text" id="userBox" maxlength="50" style="width: 157px; "/></td>
+			</tr>
+			<tr>
+				<td>Password:</td>
+				<td><input name="password" type="password" id="userBox" maxlength="50" style="width: 157px; "/></td>
+			</tr>
+			<tr>
+				<td><input type="reset" value="Reset"></td>
+				<td><button class="btn" name="summitform" type="submit" value="return">Create New User</button></td>
+			</tr>
+		</table>
+		</form>
+        
+    <br>   
+    <form action ="@routes.Application.index()" method="post">
+ 		 <button class="btn"  name="subject" type="submit" value="return">Back To Login</button>
+	</form>
+    
+    </body>
+</html>
+}
+	
