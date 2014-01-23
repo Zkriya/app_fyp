@@ -1,13 +1,10 @@
 package models;
 
-import java.util.*;
 import javax.persistence.*;
-import controllers.Application.Login;
-import controllers.routes;
-import play.data.Form;
-import play.db.ebean.*;
-import play.mvc.Result;
 
+import play.db.ebean.*;
+
+@SuppressWarnings("serial")
 @Entity
 public class User extends Model{
 	

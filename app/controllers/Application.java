@@ -6,19 +6,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import com.avaje.ebean.ExpressionList;
-
-import models.Bar;
 import models.Checkin;
 import models.Location;
 import models.User;
 import play.data.*;
-import play.db.ebean.Model;
 import play.mvc.*;
 import views.html.*;
 import static play.data.Form.*;
-import static play.libs.Json.*;
 
 public class Application extends Controller {
 
@@ -49,15 +43,10 @@ public class Application extends Controller {
             return redirect(routes.Application.getHome());
         }
     }
-    public static Result addBar(){
-    	Bar bar= Form.form(Bar.class).bindFromRequest().get();
-    	bar.save();
-    	return redirect(routes.Application.index());
-    }
     
     public static Result getHome(){
 		String user = session("userId");
-		ArrayList<String> listofCheckin= new ArrayList<String>();
+		//ArrayList<String> listofCheckin= new ArrayList<String>();
 		//testcode
 		//User bob = User.find.where().eq("email", "bob@gmail.com").findUnique();
 		
@@ -163,6 +152,9 @@ public class Application extends Controller {
 		}
     	return ok(listUser.render("hello",usr));
     }
+    
+    
+    
     public static class Login {
         public String userId;
         public String password;
