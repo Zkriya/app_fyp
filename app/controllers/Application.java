@@ -6,9 +6,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import models.Checkin;
-import models.Location;
-import models.User;
+
+import models.db1.Checkin;
+import models.db1.Location;
+import models.db1.User;
 import play.data.*;
 import play.mvc.*;
 import views.html.*;

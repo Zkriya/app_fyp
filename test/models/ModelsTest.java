@@ -1,6 +1,7 @@
 package models;
 
-import models.*;
+import models.db1.*;
+
 import org.junit.*;
 import static org.junit.Assert.*;
 import play.test.WithApplication;

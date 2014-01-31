@@ -3,8 +3,8 @@ package controllers;
 import java.util.*;
 import java.io.*;
 
-import models.User;
-import models.Location;
+import models.db1.Location;
+import models.db1.User;
 public class Recommender {
 	private static long startTime = System.currentTimeMillis();
 	private static double[][] slotSimilarity = new double[24][24];

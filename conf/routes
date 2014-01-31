@@ -21,5 +21,9 @@ GET		/home/getresult		      	controllers.Application.getResult()
 GET		/home/gethistory	      	controllers.Application.getHistory()
 
 
+#Map and Recommendation
+GET		/test/:targetUserId 		controllers.Engine.getRecommendation(targetUserId:Integer)
+GET   	/map						controllers.Engine.getMap()
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

@@ -1,32 +1,27 @@
-package models.db2;
+package models.db1;
 
 
-import javax.persistence.Column;
+import java.util.HashSet;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import play.db.ebean.Model;
-import play.db.ebean.Model.Finder;
-
 
 @Entity
-public class Location {
+public class Location extends Model{
 	@Id
-	@Column(name="locId")
 	public String locId;
-	@Column(name="latitude")
 	public double latitude;
-	@Column(name="longitude")
 	public double longitude;
-	@Column(name="address")
-	public String address;
-	@Column(name="description", columnDefinition="TEXT")
-	public String description;
-	@Column(name="photoUrl")
-	public String photoUrl;
-	@Column(name="categories")
-	public String categories;
-	public static Model.Finder<String,Location> find = new Finder<String,Location>("main", String.class, Location.class); 
+	
+	public Location(){
+	}
+	public Location(String locId, double latitude, double longitude){
+		this.locId = locId;
+		this.latitude = latitude;
+		this.longitude = longitude;
+	}
 	@Override
 	public boolean equals(Object other){
 		if(this == other) return true;
