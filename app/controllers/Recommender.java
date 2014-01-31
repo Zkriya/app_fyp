@@ -4,7 +4,8 @@ import java.util.*;
 import java.io.*;
 
 import models.db1.Location;
-import models.db1.User;
+import models.db2.User;
+import models.db2.CheckIn;
 public class Recommender {
 	private static long startTime = System.currentTimeMillis();
 	private static double[][] slotSimilarity = new double[24][24];
@@ -12,52 +13,43 @@ public class Recommender {
 	
 	public Recommender(){
 	}
-	public ArrayList<String> run(String dataFile, User targetUser){
-		HashMap<User, HashMap<Location, HashSet<Short>>> allUsers = new HashMap<User, HashMap<Location, HashSet<Short>>>();
-		ArrayList<Location> allLocs = new ArrayList<Location>();
+	public ArrayList<String> run(Integer targetUser){
+		//List<models.db2.User> allUsers = models.db2.User.find.all();
+		//List<models.db2.Location> allLocs = models.db2.Location.find.all();
+		//List<models.db2.User> usersFromDB = models.db2.User.find.all();
+		List<models.db2.CheckIn> checkIns = models.db2.CheckIn.find.all();
+		HashMap<Integer, HashMap<Location, HashSet<Short>>> allUsers = new HashMap<Integer,HashMap<Location,HashSet<Short>>>();
+		//HashMap<User, HashMap<Location, HashSet<Short>>> allUsers = new HashMap<User, HashMap<Location, HashSet<Short>>>();
 		ArrayList<String> returnString= new ArrayList<String>();
-		
-		try{
-			BufferedReader in = new BufferedReader(new FileReader(dataFile));
-			String inLine;
-			while((inLine = in.readLine()) != null){
-					String[] arrStr = inLine.split("\t");
-					User user = new User(arrStr[0]);
+		ArrayList<Location> allLocs = new ArrayList<Location>();
+		for (int i=0; i < checkIns.size(); i++){
+			Integer uId = checkIns.get(i).userId;
+			Location l = new Location();
+			l.locId = checkIns.get(i).locId;
+			l.latitude = checkIns.get(i).latitude;
+			l.longitude = checkIns.get(i).longitude;
 			
-					Location l = new Location();
-					l.locId = arrStr[1];
-					String[] loc_parts = arrStr[2].split(",");
-					l.latitude = Double.parseDouble(loc_parts[0]);
-					l.longitude = Double.parseDouble(loc_parts[1]);
-					Short timeOfCheckIn = Short.parseShort(arrStr[3]);
-					
-					HashSet<Short> times = new HashSet<Short>();
-					times.add(timeOfCheckIn);		
-					
-					HashMap<Location, HashSet<Short>> locTime = new HashMap<Location, HashSet<Short>>();
-					locTime.put(l, times);
-					
-					if (!allUsers.containsKey(user)){
-						allUsers.put(user, locTime);
-					}
-					else{
-						if (allUsers.get(user).containsKey(l)){
-							if (!allUsers.get(user).get(l).contains(timeOfCheckIn)){
-								allUsers.get(user).get(l).add(timeOfCheckIn);
-							}//else it is duplicate, do nothing
-						}
-						else{
-							allUsers.get(user).put(l, times);
-						}
-					}
-					if (!allLocs.contains(l)){
-						allLocs.add(l);
-					}
+			Short timeOfCheckIn = Integer.valueOf(checkIns.get(i).slot).shortValue();
+			HashSet<Short> times = new HashSet<Short>();
+			times.add(timeOfCheckIn);		
+			HashMap<Location, HashSet<Short>> locTime = new HashMap<Location, HashSet<Short>>();
+			locTime.put(l, times);
+			if (!allUsers.containsKey(uId)){
+				allUsers.put(uId, locTime);
 			}
-			in.close();
-		}
-		catch (IOException ex){
-			ex.printStackTrace();
+			else{
+				if (allUsers.get(uId).containsKey(l)){
+					if (!allUsers.get(uId).get(l).contains(timeOfCheckIn)){
+						allUsers.get(uId).get(l).add(timeOfCheckIn);
+					}
+				}
+				else{
+					allUsers.get(uId).put(l, times);
+				}
+			}
+			if(!allLocs.contains(l)){
+				allLocs.add(l);
+			}
 		}
 		for (Short s=0; s < 24; s++){
 			for (Short x=0; x < 24; x++){
@@ -71,7 +63,7 @@ public class Recommender {
 			for (int j=0; j < willingArr[0].length; j++){
 				if (i != j){
 					double a = 0.08984445569632919;       //It may be wrong value for a, taken from code of Phd student. 
-					double k = -1.1109234088432385;		  //It may be wrong value for k, taken from code of Phd student.
+					double k = -1.1109234088432385;
 					double dist = calculateDistance(allLocs.get(i), allLocs.get(j));
 					willingArr[i][j] = a * Math.pow(dist, k);
 				}
@@ -83,7 +75,6 @@ public class Recommender {
 		//User targetUser = new User("USER_689");
 		Short atTime = 20;
 		double[] recScoreForLocsSpatial = new double[allLocs.size()];
-		
 		for (int z=0; z < recScoreForLocsSpatial.length; z++){
 			if (allUsers.get(targetUser).containsKey(allLocs.get(z))){   //Do not consider visited locations
 				continue;
@@ -91,7 +82,7 @@ public class Recommender {
 			double numerator1=0, denominator1=0;
 			double numerator2=0, denominator2=0;
 			double priorProbability = 0;
-			for (Map.Entry<User, HashMap<Location, HashSet<Short>>> entry : allUsers.entrySet()){
+			for (Map.Entry<Integer, HashMap<Location, HashSet<Short>>> entry : allUsers.entrySet()){
 				HashMap<Location, HashSet<Short>> locs = entry.getValue();
 				if (locs.containsKey(allLocs.get(z)) && locs.get(allLocs.get(z)).contains(atTime)){
 					numerator1++;
@@ -141,9 +132,9 @@ public class Recommender {
 				long endTime1 = System.currentTimeMillis();
 				System.out.println("Loc = " + allLocs.get(z).locId + " score = "+ recScoreForLocsTemporal[z] + " time = " + (endTime1 - startTime));
 			}
-		}
-		*/
+		}*/
 		//End of part 3.
+		
 		double maxSpatial = 0;
 		double maxTemporal = 1;
 		for (int i=0; i < recScoreForLocsSpatial.length; i++){
@@ -169,7 +160,6 @@ public class Recommender {
 		ArrayList<Double> sortedScores = new ArrayList<Double>();
 		sortedLocations.addAll(sortedMap.keySet());
 		sortedScores.addAll(sortedMap.values());
-		returnString.add("SCORE");
 		for (int i=sortedScores.size()-1; i >= sortedScores.size() - 10; i-- ){
 			double normalizedScore = (sortedScores.get(i) - sortedScores.get(0)) / (sortedScores.get(sortedScores.size()-1) - sortedScores.get(0));
 			//System.out.println("Location = " + sortedLocations.get(i).locId + " score = " + normalizedScore);
@@ -209,7 +199,7 @@ public class Recommender {
 	private static double rad2deg(double rad) {
 		return (rad * 180 / Math.PI);
 	}
-	public static double similarityBetweenSlots(Short s, Short x, HashMap<User, HashMap<Location, HashSet<Short>>> allUsers){
+	public static double similarityBetweenSlots(Short s, Short x, HashMap<Integer, HashMap<Location, HashSet<Short>>> allUsers){
 		double averageSimilarity = 0;
 		ArrayList<Double> cosArr = new ArrayList<Double>();
 		
@@ -217,7 +207,7 @@ public class Recommender {
 		double magnitude1;
 		double magnitude2;
 		
-		for (Map.Entry<User, HashMap<Location, HashSet<Short>>> entry : allUsers.entrySet()) {
+		for (Map.Entry<Integer, HashMap<Location, HashSet<Short>>> entry : allUsers.entrySet()) {
 		    HashMap<Location, HashSet<Short>> locsOfU = entry.getValue();
 		    dotProduct = 0;
 			magnitude1 = 0;
@@ -314,27 +304,6 @@ public class Recommender {
 			sortedMap.put(entry.getKey(), entry.getValue());
 		}
 		return sortedMap;
-	}
-
-	public ArrayList<String> temporal(String dataFile, User targetUser){
-		ArrayList<String> returnString = new ArrayList<String>();
-		
-		return returnString;
-		
-	}
-	
-	public ArrayList<String> spartial(String dataFile, User targetUser){
-		ArrayList<String> returnString = new ArrayList<String>();
-		
-		return returnString;
-		
-	}
-	
-	public ArrayList<String> userBasedCollaborativeFiltering(String dataFile, User targetUser){
-		ArrayList<String> returnString = new ArrayList<String>();
-		
-		return returnString;
-		
 	}
 }
 

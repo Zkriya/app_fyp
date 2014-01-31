@@ -86,7 +86,7 @@ public class Application extends Controller {
     	String name =session("userId");
     	//System.out.println("inGetResult");
 		String dataFile= "app/controllers/tune.txt";
-		ArrayList<String> result = a.run(dataFile, new User(name));
+		ArrayList<String> result = a.run(Integer.parseInt(name));
 		System.out.println(result);
     	return ok(listResult.render("resultset",result));
     }
