@@ -6,7 +6,8 @@ libraryDependencies ++= Seq(
   javaJdbc,
   javaEbean,
   "mysql" % "mysql-connector-java" % "5.1.18",
-  cache
+  "org.json" % "json" % "20131018",
+   cache
 )     
 
 val appDependencies = Seq(

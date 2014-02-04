@@ -1,9 +1,7 @@
-@(output : ArrayList[String])
-@main("Welcome"){
+@(output : ArrayList[models.db2.Location])
 <ul>
-		 @for(score <- output){
-		 		<li>@score
+		 @for(loc <- output){
+		 		<li>@loc.locId
 		 }
 		 
 </ul>
-}
