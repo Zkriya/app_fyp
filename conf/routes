@@ -4,26 +4,22 @@
 
 # Home page
 GET     /                           controllers.Application.index()
+GET		/login						controllers.Application.login()
 POST    /login                      controllers.Application.authenticate()
-POST    /                           controllers.Application.index()
 GET     /logout                     controllers.Application.logout()
 
 ##new user
-POST	/newUser					controllers.Application.newUser()
-POST	/login/create				controllers.Application.createUser()
+GET		/newUser					controllers.Application.newUser()
+POST	/newUser					controllers.Application.createUser()
 
 ##home
 POST	/home				      	controllers.Application.getHome()
 GET		/home				      	controllers.Application.getHome()
-POST	/home/getuser		      	controllers.Application.getUser()
-POST	/home/getresult		      	controllers.Application.getResult()
-GET		/home/getresult		      	controllers.Application.getResult()
-GET		/home/gethistory	      	controllers.Application.getHistory()
 
 
 #Map and Recommendation
 GET		/test/:targetUserId 		controllers.Engine.getRecommendation(targetUserId:Integer)
-GET   	/map						controllers.Engine.getMap()
+GET   	/recommendMe				controllers.Engine.recommendMe()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

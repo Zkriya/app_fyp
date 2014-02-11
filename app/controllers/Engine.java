@@ -20,7 +20,7 @@ public class Engine extends Controller{
 		}
 		return ok(testShow.render(output));
 	}
-	public static Result getMap(){
+	public static Result recommendMe(){
 		ArrayList<models.db2.Location> output = new ArrayList<models.db2.Location>();
 		List<models.db2.Location> dbLocation = models.db2.Location.find.all();
 		for (int i=0; i < 10; i++){
@@ -28,6 +28,7 @@ public class Engine extends Controller{
 		}
 		JSONObject featureCollection = new JSONObject();
 		String result="";
+		Integer index=0;
 		try{
 			featureCollection.put("type", "FeatureCollection");
 			JSONArray featureList = new JSONArray();
@@ -42,8 +43,9 @@ public class Engine extends Controller{
 	            	properties.put("title", loc.description);
 	            }
 	            else{
-	            	properties.put("tutle", "Description not available");
+	            	properties.put("title", "Description not available");
 	            }
+	            properties.put("index", ++index);
 	            properties.put("marker-color", "#f00");
 	            JSONObject feature = new JSONObject();
 	            feature.put("geometry", point);
@@ -56,7 +58,7 @@ public class Engine extends Controller{
 		catch(JSONException ex){
 			ex.printStackTrace();
 		}
-		return ok(map.render(output, featureCollection.toString()));
+		return ok(map.render(output, featureCollection.toString(),"recommendMe"));
 	}
 	
 }

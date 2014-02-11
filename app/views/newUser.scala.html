@@ -1,40 +1,59 @@
-@(message: String, userForm: Form[models.db1.User])
-
-
-@main("Welcome to MyApp") {
-
-	THIS IS Create User Page
+@(userForm: Form[models.db2.User])
+@main("Welcome to MyApp", "", "showLogIn") {
 <html>
-    
+    <head>
+    	<style>
+    		.textAlignCenter {text-align:center;}
+    		.addMarginBottom{margin-bottom:15px}
+    	</style>
+    </head>
     <body>
-   
-        <form action ="@routes.Application.createUser()" method="post">
-        <table>
-			<tr>
-				<td>Name:</td>
-				<td><input name="name" id="name" type="text" id="userBox" maxlength="50" style="width: 157px; " /></td>
-			</tr>
-			<tr>
-				<td>Email:</td>
-				<td><input name="email" type="text" id="userBox" maxlength="50" style="width: 157px; "/></td>
-			</tr>
-			<tr>
-				<td>Password:</td>
-				<td><input name="password" type="password" id="userBox" maxlength="50" style="width: 157px; "/></td>
-			</tr>
-			<tr>
-				<td><input type="reset" value="Reset"></td>
-				<td><button class="btn" name="summitform" type="submit" value="return">Create New User</button></td>
-			</tr>
-		</table>
-		</form>
-        
-    <br>   
-    <form action ="@routes.Application.index()" method="post">
- 		 <button class="btn"  name="subject" type="submit" value="return">Back To Login</button>
-	</form>
-    
+       <form action ="@routes.Application.createUser()" method="post">
+		
+		<div class="container">
+			<div class="row span12" style="margin:auto;">
+		    	<div class="row span12">
+			    	<h3 class="span5 textAlignCenter">Email</h3>
+			    	<h3 class="span5 textAlignCenter">Password</h3>
+			    </div>
+			    <div class="row span12 addMarginBottom">
+			    	<input class="span5" type="email" name="email" id="userBox">
+			    	<input class="span5" type="password" name="password" id="userBox">
+			    </div>
+			    <div class="row span12">
+			    	<h3 class="span5 textAlignCenter">First Name</h3>
+			    	<h3 class="span5 textAlignCenter">Last Name</h3>
+			    </div>
+			    <div class="row span12 addMarginBottom">
+			    	<input class="span5" type="text" name="firstName" id="userBox" maxlength="30">
+			    	<input class="span5" type="text" name="lastName" id="userBox" maxlength="30">
+			    </div>
+			    <div class="row span12">
+			    	<h3 class="span5 textAlignCenter">Gender</h3>
+			    	<h3 class="span5 textAlignCenter">Birthday</h3>
+			    </div>
+			    <div class="row span12 addMarginBottom">
+			    	<div class="span5">
+			    		<input type="radio" style="margin-left:80px" name="gender" value="1" checked>
+			   		 	<h5 style="display:inline; padding-right:20px">Male</h5>
+			    		<input type="radio" name="gender" value="0">
+			    		<h5 style="display:inline">Female</h5>
+			    	</div>
+			    	<div class="span5" style="padding-left:40px; padding-top:3px">
+			    	   	<input type="text" name="day" id="userBox" class="span1" placeholder="DD">
+			   			<input type="text" name="month" id="userBox" class="span1" placeholder="MM">
+			   			<input type="text" name="year" id="userBox" class="span2" placeholder="YYYY">
+			    	</div>
+			   </div> 
+			   <div class="row span12" style="padding-left:270px">
+			    	<button class="btn large primary" name="submitform" type="submit" value="return">SIGN UP</button></td>
+			    </div>
+			</div>
+		 </div>
+		
+			</form> 
     </body>
 </html>
+
 }
 	

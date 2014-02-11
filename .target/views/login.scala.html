@@ -1,58 +1,42 @@
-@(loginForm: Form[Application.Login])(message:String)
+@(loginForm: Form[Application.Login])
 
 @import helper._
 
-@main("Welcome to Play") {
-	
+@main("","","") {
 	
 	<html>
 	    <head>
 	        <title>Recommender</title>
 	        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-	        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/login.css")">
 	    </head>
-	    
-	    
 	    <body>
 	    @if(loginForm!=null){
 			@if(loginForm.hasGlobalErrors) {
-			    <p class="error">
+			    <p class="alert-message error" style="text-align:center; margin:auto">
 			        @loginForm.globalError.message
 			    </p>
 			}
 		}
 		@if(flash.contains("success")) {
-	    <p class="success">
+	    <p class="alert-message success" style="text-align:center; margin:auto">
 	        @flash.get("success")
 	    </p>
-	}
-	    @helper.form(action =routes.Application.authenticate) {
-		   <h1>Sign in</h1>
-		   
-			
-		   <p>
-		       <input type="text" name="userId" placeholder="userID">
-		   </p>
-		   <p>
-		       <input type="password" name="password" placeholder="Password">
-		   </p>
-		   <p>
-            <button class="btn primary" type="submit">Login</button>
-            <a href="@routes.Application.index" class="btn">Cancel</a>
-            </p>
 		}
-		<br>
-		<br>
-		<form action ="@routes.Application.newUser()" method="post">
-	 		 <button class="btn secondary" name="newuser" type="submit" value="NewUser?">I am a new USER</button>
-		</form>
-		
-		<form action ="@routes.Application.getUser()" method="post">		
-	 		 <button class="btn secondary" name="subject" type="submit" value="return">Get List of User</button>
-		</form>
-		
-		<br>
-	    
-	    </body>
+	    @helper.form(action=routes.Application.authenticate){
+	    	<div style="width:200px;margin:auto">
+	    			<h4 style="text-align:center">Log In</h4>
+				   <div style="margin-bottom:12px">
+				       <input type="email" name="email" placeholder="Email">
+				   </div>
+				   <div style="margin-bottom:12px">
+				       <input type="password" name="password" placeholder="Password">
+				   </div>
+				   <div style="margin-bottom:12px; text-align:center">
+		            	<input type="submit" class="btn primary" value="Log In"> or 
+		            	<a href="@routes.Application.newUser">Sign Up</a>
+		           </div>
+            </div>
+      	}
+		 </body>
 	</html>
 }

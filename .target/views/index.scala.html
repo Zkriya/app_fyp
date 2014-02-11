@@ -1,15 +1,14 @@
-@(loginForm: Form[Application.Login])(message:String)
+@(loginForm: Form[Application.Login])
 
 @import helper._
 
-@main("Welcome to Play") {
+@main("Welcome to Play","","") {
 	
 	
 	<html>
 	    <head>
 	        <title>Recommender</title>
 	        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-	        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/login.css")">
 	    </head>
 	    
 	    
@@ -29,29 +28,17 @@
 	    @helper.form(action =routes.Application.authenticate) {
 		   <h1>Sign in</h1>
 		   
-			
 		   <p>
-		       <input type="text" name="userId" placeholder="userID">
+		       <input type="email" name="email" placeholder="Email">
 		   </p>
 		   <p>
 		       <input type="password" name="password" placeholder="Password">
 		   </p>
-		   
-            <input type="submit" class="btn primary" value="LogIn">
-            <a href="@routes.Application.index" class="btn">Cancel</a>
+		   <p>
+            	<input type="submit" class="btn primary" value="Log In"> or 
+            	<a href="@routes.Application.newUser">Sign Up</a>
+            </p>
 		}
-		<br>
-		<br>
-		<form action ="@routes.Application.newUser()" method="post">
-	 		 <button class="btn secondary" name="newuser" type="submit" value="NewUser?">I am a new USER</button>
-		</form>
-		
-		<form action ="@routes.Application.getUser()" method="post">		
-	 		 <button class="btn secondary" name="subject" type="submit" value="return">Get List of User</button>
-		</form>
-		
-		<br>
-	    
-	    </body>
+		 </body>
 	</html>
 }

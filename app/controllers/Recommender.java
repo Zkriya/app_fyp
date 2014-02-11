@@ -1,7 +1,7 @@
 package controllers;
 import java.util.*;
 import java.io.*;
-import models.db1.Location;
+import models.db2.Location;
 import models.db2.User;
 import models.db2.CheckIn;
 

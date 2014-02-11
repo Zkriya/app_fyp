@@ -1,22 +1,27 @@
-@(user: String)
-
-
-@main("Welcome to Play") {
-	THIS IS MAIN
-	<br>
-	Welcome, @user
-	<br>
+@(user: models.db2.User)
+@main("Welcome to Play","","showTopMenu") {
+	<html>
+	<body>
 	
-	
-	<br>
-	
-	<form action ="@routes.Application.createUser()" method="post">		
- 		 <button class="btn"name="subject" type="submit" value="return">Add a Friend</button>
-	</form>
-	
-	        
-	
-	<br>
-	
+		<div class="container" style="background-color:#FFFFFF;">
+			<div style="margin-left:30px; padding-top:20px">
+				<div style="float:left">
+					<img alt="" src="@routes.Assets.at("images/profile.jpg")" height="180" width="180">
+				
+				</div>
+				<div style="float:left; padding-left:20px">
+					<h3 style="display:inline">@user.firstName</h3>
+					<h3 style="display:inline">@user.lastName</h3>
+					<h4>Basic Information</h4>
+					<p>Gender : male</p>
+					<p>Birthday : March 31st</p> 
+					<p>Hometown : Singapore</p>
+					<p>About Me : Enjoying the 21st Century</p>
+					
+				</div>	
+			</div>
+		</div>
+	</body>
+	</html>
 	
 }

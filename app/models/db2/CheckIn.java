@@ -24,5 +24,5 @@ public class CheckIn extends Model{
 	public double latitude;
 	@Column(name="longitude")
 	public double longitude;
-	public static Model.Finder<Integer,CheckIn> find = new Finder<Integer,CheckIn>("main", Integer.class, CheckIn.class); 
+	public static Model.Finder<Integer,CheckIn> find = new Finder<Integer,CheckIn>(Integer.class, CheckIn.class); 
 }

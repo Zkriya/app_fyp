@@ -4,16 +4,20 @@ package models.db2;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder;
 
 
 @Entity
+@Table(name="Location")
 public class Location {
 	@Id
 	@Column(name="locId")
 	public String locId;
+	@Column(name="name")
+	public String name;
 	@Column(name="latitude")
 	public double latitude;
 	@Column(name="longitude")
@@ -22,11 +26,15 @@ public class Location {
 	public String address;
 	@Column(name="description", columnDefinition="TEXT")
 	public String description;
-	@Column(name="photoUrl")
+	@Column(name="photoUrl", columnDefinition="TEXT")
 	public String photoUrl;
 	@Column(name="categories")
 	public String categories;
-	public static Model.Finder<String,Location> find = new Finder<String,Location>("main", String.class, Location.class); 
+	@Column(name="usersCount")
+	public int usersCount;
+	@Column(name="checkInsCount")
+	public int checkInsCount;
+	public static Model.Finder<String,Location> find = new Finder<String,Location>(String.class, Location.class); 
 	@Override
 	public boolean equals(Object other){
 		if(this == other) return true;
