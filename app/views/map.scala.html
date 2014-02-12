@@ -13,13 +13,11 @@
         		<link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
    
 				<style>
-				  #map { position:fixed; top:40px; bottom:0;max-height:100%;  right:0; width:50%;}
-				  #recommendation {position:absolute; top:100px; left:0; width:100%; max-height:100%; background-color:white;}
-				  #slidingDiv {}
-				  #wrapper{ width:100%; height:100%;}
-				  #wrapper:hover{ overflow-y:auto;}
+				  #map { position:fixed; top:40px; bottom:0;  right:0; width:50%;}
+				  #recommendation {position:absolute; top:40px; left:0; width:100%; background-color:white;}
 				  .locs{height:160px; padding-left:60px}
 				  .locs:hover{ background:#F8F8FF; }
+				  .locs:active { background: #D3D3D3}
 				</style>
 				</head>
 		<body>
@@ -39,33 +37,30 @@
             </div>
     	</div>
    			<div id='recommendation'>
-					<div id="slidingDiv">
-							@for((l, i) <- output.zipWithIndex){
-							<div class="locs" id="locElement@{i+1}">
-								<div style="float:left">
-									<h3>@{i+1}.</h4>
-								</div>
-								<div style="width:380px; float:left">
-									<h3>@l.name</h3>
-										<div style="padding-left:2px">
-											<p>@l.address</p>
-											<p>@l.categories.split(",")(0)</p>
-											<p>Total Visitors: @l.usersCount</p>
-											<p></p>
-										</div>
-								</div>
-								<div style="float:left; margin-top:15px; width:150px">
-									@if(!Option(l.photoUrl).isEmpty){
-									<img alt="" src="@l.photoUrl.split(",")(0)" width="130" height="130">
-									}else{
-									<img alt="" src="@routes.Assets.at("images/noImage.jpg")" width="130" height="130" border="1">
+   							<div id="slidingDiv">
+   									@for((l, i) <- output.zipWithIndex){
+												<div class="locs" id="locElement@{i+1}" onClick="highlightLink(this); showOnMap(locElemend@{i+1})">
+													<div style="width:380px; float:left">
+														<h3><a href=#>@{i+1}.@l.name</a></h3>
+															<div style="padding-left:2px">
+																<p>@l.address</p>
+																<p>@l.categories.split(",")(0)</p>
+																<p>Total Visitors: @l.usersCount</p>
+																<p></p>
+															</div>
+													</div>
+													<div style="float:left; margin-top:15px; width:150px">
+														@if(!Option(l.photoUrl).isEmpty){
+														<img alt="" src="@l.photoUrl.split(",")(0)" width="130" height="130">
+														}else{
+														<img alt="" src="@routes.Assets.at("images/noImage.jpg")" width="130" height="130" border="1">
+														}
+													</div>
+												</div>
 									}
-								</div>
+									
 							</div>
-							}
-					</div>
-				</div>
-				<div class="wrapper">
+					
 					<div id='map'></div>
 				</div>
 		<script>
@@ -76,21 +71,32 @@
 		// Pass features and a custom factory function to the map
 		map.markerLayer.setGeoJSON(geoJson);
 		map.scrollWheelZoom.disable();
-		map.markerLayer.on('mouseover', function(e) {
-		    e.layer.openPopup();
-		});
-		map.markerLayer.on('mouseout', function(e) {
-		    e.layer.closePopup();
-		});
+		
 		
 		map.markerLayer.on('click', function(e) {
 			//alert(e.layer.feature.properties.index);
 			//$('#locElement'+e.layer.feature.properties.index).goTo(); 
 		   // window.open(e.layer.feature.properties.url);
 		    $('html,body').animate({
-     		   scrollTop: $('#locElement' + e.layer.feature.properties.index).offset().top},
+     		   scrollTop: $('#locElement' + e.layer.feature.properties.index).offset().top - 100},
         		'slow');
+		    highlightLink(document.getElementById('locElement' + e.layer.feature.properties.index));
 		});
+		
+		var highlightLink = function () {
+			var active = null, colour = '#D9ECF7';
+	        if (this.attachEvent) this.attachEvent('onunload', function () {
+	            active = null;
+	        });
+	        return function (element) {
+	            if ((active != element) && element.style) {
+	                if (active) active.style.backgroundColor = '';
+	                element.style.backgroundColor = colour;
+	                active = element;
+	            }
+	        };
+	    }();
+		
 		</script>
 		
 		

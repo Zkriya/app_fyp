@@ -33,19 +33,17 @@ public class Engine extends Controller{
 			featureCollection.put("type", "FeatureCollection");
 			JSONArray featureList = new JSONArray();
 			for (models.db2.Location loc : output){
+				index += 1;
 				JSONObject point = new JSONObject();
 				point.put("type", "Point");
 				// construct a JSONArray from a string; can also use an array or list
 	            JSONArray coord = new JSONArray("["+loc.longitude+","+loc.latitude+"]");
 	            point.put("coordinates", coord);
 	            JSONObject properties = new JSONObject();
-	            if (loc.description != null){
-	            	properties.put("title", loc.description);
-	            }
-	            else{
-	            	properties.put("title", "Description not available");
-	            }
-	            properties.put("index", ++index);
+	            String str = index + ". " + loc.name;
+	            properties.put("title", str);
+	            properties.put("description", loc.address);
+	            properties.put("index", index);
 	            properties.put("marker-color", "#f00");
 	            JSONObject feature = new JSONObject();
 	            feature.put("geometry", point);
