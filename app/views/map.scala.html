@@ -27,7 +27,10 @@
                     <a class="brand" href="@routes.Application.getHome()">Home</a>
                     <ul class="nav">    
                     	    <li class="@("active".when(nav == "recommendMe"))">
-	                            <a href="@routes.Engine.recommendMe()" id="recommendMe">Recommend Me</a>
+	                            <a href="@routes.Engine.recommendMe()" id="recommendMe">Recommend me</a>
+	                        </li>
+	                        <li class="@("active".when(nav == "myLocations"))">
+	                            <a href="@routes.Engine.visitedLocations()">Visited locations</a>
 	                        </li>
 							<li class="@("active".when(nav == "logout"))">
 		                        <a href="@routes.Application.logout()" id="logOut">Logout</a>
@@ -39,22 +42,25 @@
    			<div id='recommendation'>
    							<div id="slidingDiv">
    									@for((l, i) <- output.zipWithIndex){
-												<div class="locs" id="locElement@{i+1}" onClick="highlightLink(this); showOnMap(locElemend@{i+1})">
-													<div style="width:380px; float:left">
-														<h3><a href=#>@{i+1}.@l.name</a></h3>
-															<div style="padding-left:2px">
-																<p>@l.address</p>
-																<p>@l.categories.split(",")(0)</p>
-																<p>Total Visitors: @l.usersCount</p>
-																<p></p>
-															</div>
-													</div>
-													<div style="float:left; margin-top:15px; width:150px">
-														@if(!Option(l.photoUrl).isEmpty){
-														<img alt="" src="@l.photoUrl.split(",")(0)" width="130" height="130">
-														}else{
-														<img alt="" src="@routes.Assets.at("images/noImage.jpg")" width="130" height="130" border="1">
-														}
+   												<div class="wrapper">
+   													<h3 style="position:absolute; padding-left:60px"><a href="@routes.Engine.viewLocation(l.locId)" target="_blank">@{i+1}.@l.name</a></h3>
+													<div class="locs" id="locElement@{i+1}">
+														<div style="width:380px; float:left">
+															<div style="height:40px"><a href="#" ></a></div>
+																<div style="padding-left:2px">
+																	<p>Address : @l.address</p>
+																	<p>Category : @l.categories.split(",")(0)</p>
+																	<p>Total Visitors: @l.usersCount</p>
+																	<p></p>
+																</div>
+														</div>
+														<div style="float:left; margin-top:15px; width:150px">
+															@if(!Option(l.photoUrl).isEmpty){
+															<img alt="" src="@l.photoUrl.split(",")(0)" width="130" height="130">
+															}else{
+															<img alt="" src="@routes.Assets.at("images/noImage.jpg")" width="130" height="130" border="1">
+															}
+														</div>
 													</div>
 												</div>
 									}
@@ -64,23 +70,25 @@
 					<div id='map'></div>
 				</div>
 		<script>
-		var map = L.mapbox.map('map', 'zkria.h2nkic6a').setView([1.28896996449708, 103.846958006038], 13);
+		var map = L.mapbox.map('map', 'zkria.h2nkic6a').setView([1.28896996449708, 103.846958006038], 14);
 		// The GeoJSON representing the two point features
 		var geoJson = @Html(featureCollection);
-		//alert(JSON.stringify(geoJson['features'][0]['properties']['index']));
-		// Pass features and a custom factory function to the map
 		map.markerLayer.setGeoJSON(geoJson);
 		map.scrollWheelZoom.disable();
-		
-		
 		map.markerLayer.on('click', function(e) {
-			//alert(e.layer.feature.properties.index);
-			//$('#locElement'+e.layer.feature.properties.index).goTo(); 
-		   // window.open(e.layer.feature.properties.url);
-		    $('html,body').animate({
+			 $('html,body').animate({
      		   scrollTop: $('#locElement' + e.layer.feature.properties.index).offset().top - 100},
         		'slow');
 		    highlightLink(document.getElementById('locElement' + e.layer.feature.properties.index));
+		});
+		map.featureLayer.eachLayer(function(marker) {
+		 	var element = document.getElementById('locElement' + marker.feature.properties.index);
+		 	element.onclick = function() {
+		 		   highlightLink(document.getElementById('locElement' + marker.feature.properties.index));
+		 		   map.panTo(marker.getLatLng());
+		 	       marker.openPopup();
+		 	      return false;
+		 	     };
 		});
 		
 		var highlightLink = function () {

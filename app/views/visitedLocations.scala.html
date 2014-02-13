@@ -1,0 +1,5 @@
+@(countMap : HashMap[models.db2.Location, Integer])
+@for((loc, value) <- countMap) {
+  <h3>@loc</h3>
+  <h4>@value</h4>
+}

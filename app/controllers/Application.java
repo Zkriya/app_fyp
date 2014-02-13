@@ -60,7 +60,7 @@ public class Application extends Controller {
     
     public static Result createUser() throws Exception{
     	Form<User> userForm = form(User.class);
-         
+        /* 
     	Map<String, String[]> formData = request().body().asFormUrlEncoded();
     	String email = formData.get("email")[0];
     	String password = formData.get("password")[0];
@@ -71,6 +71,7 @@ public class Application extends Controller {
     	int month = Integer.parseInt(formData.get("month")[0]);
     	int year = Integer.parseInt(formData.get("year")[0]);
     	User newUser = new User(firstName, lastName, isMale, email, password, day, month, year);
+    	*/
         return redirect(routes.Application.login());
     }
     public static class Login {

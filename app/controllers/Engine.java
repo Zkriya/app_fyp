@@ -1,7 +1,13 @@
 package controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+
+import models.db2.Location;
+import models.db2.User;
+
 import org.json.*;
 
 import com.avaje.ebean.config.dbplatform.DB2Platform;
@@ -19,6 +25,37 @@ public class Engine extends Controller{
 			output.add(loc);
 		}
 		return ok(testShow.render(output));
+	}
+	public static Result viewLocation(String locId){
+		models.db2.Location location = models.db2.Location.find.byId(locId);
+		String[] photos = null;
+		if (location.photoUrl != null){
+		 photos = location.photoUrl.split(",");
+		}
+		return ok(showLocation.render(location, photos));
+	}
+	public static Result visitedLocations(){
+		String email = session("email");
+		if(email == null){
+			return redirect(routes.Application.login());
+		}
+		User user = User.find.where().eq("email", email).findUnique();
+		List<models.db2.CheckIn> checkIns = models.db2.CheckIn.find.where().eq("userId", user.userId).findList();
+		HashMap<Location, Integer> countMap = new HashMap<Location, Integer>();
+		for (int i=0; i < checkIns.size(); i++){
+			Location loc = Location.find.where().eq("locId", checkIns.get(i).locId).findUnique();
+			if (!countMap.containsKey(loc)){
+				Integer val = Integer.valueOf(1);
+				countMap.put(loc, val);
+			}
+			else{
+				Integer val = countMap.get(loc);
+				val++;
+				countMap.put(loc, val);
+			}
+		}
+		System.out.println(countMap);
+		return ok(visitedLocations.render(countMap));
 	}
 	public static Result recommendMe(){
 		ArrayList<models.db2.Location> output = new ArrayList<models.db2.Location>();
@@ -44,6 +81,7 @@ public class Engine extends Controller{
 	            properties.put("title", str);
 	            properties.put("description", loc.address);
 	            properties.put("index", index);
+	            properties.put("marker-id", "marker-" + index);
 	            properties.put("marker-color", "#f00");
 	            JSONObject feature = new JSONObject();
 	            feature.put("geometry", point);
