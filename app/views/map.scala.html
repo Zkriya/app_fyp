@@ -1,9 +1,9 @@
 @(output : ArrayList[models.db2.Location], featureCollection : String, nav: String)
-		<!DOCTYPE html>
+<!DOCTYPE html>
 		<html>
 				<head>
 				<meta charset=utf-8 />
-				<title>Markers As Links</title>
+				<title>Recommender</title>
 				
 				<script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.1/mapbox.js'></script>
 				<link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.1/mapbox.css' rel='stylesheet' />
@@ -17,10 +17,38 @@
 				  #recommendation {position:absolute; top:40px; left:0; width:100%; background-color:white;}
 				  .locs{height:160px; padding-left:60px}
 				  .locs:hover{ background:#F8F8FF; }
-				  .locs:active { background: #D3D3D3}
 				</style>
 				</head>
 		<body>
+		<script>
+			function getUserLocation(){
+				  {
+				  if (navigator.geolocation)
+				    {
+					  	navigator.geolocation.getCurrentPosition(showPosition);
+					}
+				  else{alert("Geolocation is not supported by this browser. Please use another browser");}
+				  }
+					function showPosition(position)
+				  {	 
+					  var uLat = position.coords.latitude; 
+				      var uLong = position.coords.longitude;
+				      addUserToMap(uLat, uLong);
+				      for(var i=1; i <= @output.size(); i++){
+				    	  	var iLat = document.getElementById("user" + i + "Latitude").value;
+				    	  	var iLong = document.getElementById("user" + i + "Longitude").value;
+				  	  		var dist = getDistanceFromLatLonInKm(uLat,uLong,iLat,iLong);
+						    document.getElementById('distanceFromUser' + i).value = dist;	
+				      }
+				      var elem = document.getElementById('findUserOnMap');
+				      elem.onclick = function(){
+				    		map.panTo([uLat, uLong]);  
+				      };
+				  }
+				//uLat=100;
+				 // insertNewElement();
+			};
+		</script>
 		<div class="topbar">
             <div class="fill">
                 <div class="container">
@@ -40,18 +68,62 @@
             </div>
     	</div>
    			<div id='recommendation'>
+   							<div class="topControll">
+   								<div style="padding-left:60px; padding-top:10px; padding-bottom:10px";>
+   									<lable>Number of recommendations : </lable>
+   									<select id="numberOfRecommendations" class="mini">
+	   									<option selected="selected">10</option>
+	   									<option>20</option>
+	   									<option>30</option>
+	   									<option>40</option>
+	   									<option>50</option>
+	   								</select>
+   									<lable>Recommendation time : </lable>
+   									<select id="recommendationTime" class="mini">
+   									@for(i <- 0 to 23){
+   										@if(i==20){
+   											<option selected="selected">@i</option>
+   										}else{
+   											<option>@i</option>
+   										}
+   									}
+   									</select> 
+   								</div>
+   								<div style="padding-left:100px; padding-bottom:10px">
+   											<button class="btn primary" id="findUserOnMap">Find me</button>
+   											<a class="btn primary" href="@routes.Engine.recommendMe">Run recommender</a>
+   											<button class="btn primary" onclick="sortDivs();" id="buttonForSort">Sort by distance</button>
+   								</div>	
+   							</div>
    							<div id="slidingDiv">
    									@for((l, i) <- output.zipWithIndex){
-   												<div class="wrapper">
+   												<div class="wrapper" id="wrapper@{i+1}">
    													<h3 style="position:absolute; padding-left:60px"><a href="@routes.Engine.viewLocation(l.locId)" target="_blank">@{i+1}.@l.name</a></h3>
 													<div class="locs" id="locElement@{i+1}">
 														<div style="width:380px; float:left">
 															<div style="height:40px"><a href="#" ></a></div>
 																<div style="padding-left:2px">
 																	<p>Address : @l.address</p>
-																	<p>Category : @l.categories.split(",")(0)</p>
+																	@if(!Option(l.categories).isEmpty){
+																		<p>Category : @l.categories.split(",")(0)</p>
+																	}else{
+																		<p>Category : not available</p>
+																	}
 																	<p>Total Visitors: @l.usersCount</p>
-																	<p></p>
+																	<input type="hidden" id="user@{i+1}Latitude" value="@l.latitude"></input>
+																	<input type="hidden" id="user@{i+1}Longitude" value="@l.longitude"></input>
+																	<script>
+																			var insertNewElement = function(){
+																				var input = document.createElement("input");
+													   							input.setAttribute("type", "hidden");
+													   							//input.setAttribute("type", "txt");
+													   							input.setAttribute("name", "distanceFromUser");
+													   							input.setAttribute("id","distanceFromUser@{i+1}");
+													   							input.setAttribute("value", 0);
+													   							document.getElementById("locElement@{i+1}").appendChild(input);
+																			}
+																			 insertNewElement();
+												   					</script>
 																</div>
 														</div>
 														<div style="float:left; margin-top:15px; width:150px">
@@ -64,9 +136,7 @@
 													</div>
 												</div>
 									}
-									
 							</div>
-					
 					<div id='map'></div>
 				</div>
 		<script>
@@ -104,9 +174,58 @@
 	            }
 	        };
 	    }();
-		
+	    map.locate();
+	    
+		getUserLocation();		
+	    
+	    function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+	    	  var R = 6371; // Radius of the earth in km
+	    	  var dLat = deg2rad(lat2-lat1);  // deg2rad below
+	    	  var dLon = deg2rad(lon2-lon1); 
+	    	  var a = 
+	    	    Math.sin(dLat/2) * Math.sin(dLat/2) +
+	    	    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+	    	    Math.sin(dLon/2) * Math.sin(dLon/2)
+	    	    ; 
+	    	  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+	    	  var d = R * c; // Distance in km
+	    	  return d;
+	    	}
+
+	    	function deg2rad(deg) {
+	    	  return deg * (Math.PI/180)
+	    	}
+	    	
+		function sortDivs(){
+			document.getElementById('buttonForSort').disabled = true;
+			this.disabled = true;
+			var container = document.getElementById('slidingDiv');
+			var elements = container.children;
+			var sortMe = [];
+			for (var i=0; i < elements.length; i++){
+				var index = i + 1;
+				var sortItem = $('#distanceFromUser'+index).val();
+				if (!sortItem){
+					continue;
+				}
+				sortMe.push([ sortItem , elements[i] ]);
+			}
+			sortMe.sort(function(x, y) {
+			    return x[0] - y[0];
+			});
+			container.innerHTML = "";
+			for (var i=0; i<sortMe.length; i++) {
+			    container.appendChild(sortMe[i][1]);
+			}		
+		}
+		function addUserToMap(uLat, uLong){
+			var marker = L.marker([uLat, uLong]);
+			var popupContent='Me';
+			marker.bindPopup(popupContent,{
+		        closeButton: false
+		    });
+			marker.addTo(map);
+		}	
 		</script>
-		
-		
 		</body>
 		</html>

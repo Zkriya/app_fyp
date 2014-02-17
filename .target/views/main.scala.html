@@ -1,5 +1,4 @@
 @(title: String, nav: String = "", option: String)(content: Html)
-
 <!DOCTYPE html>
 
 <html>
@@ -21,7 +20,7 @@
                     <ul class="nav">    
                     	@if(option=="showTopMenu"){
 	                        <li class="@("active".when(nav == "recommendMe"))">
-	                            <a href="@routes.Engine.recommendMe()" id="recommendMe">Recommend me</a>
+	                            <a href="@routes.Engine.recommendMe" id="recommendMe">Recommend me</a>
 	                        </li class="@("active".when(nav == "visitedLocations"))">
 	                        <li>
 	                            <a href="@routes.Engine.visitedLocations()">Visited locations</a>

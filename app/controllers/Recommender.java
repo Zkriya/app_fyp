@@ -160,7 +160,9 @@ public class Recommender {
 		ArrayList<Double> sortedScores = new ArrayList<Double>();
 		sortedLocations.addAll(sortedMap.keySet());
 		sortedScores.addAll(sortedMap.values());
-		for (int i=sortedLocations.size()-1; i >= sortedLocations.size() - 10; i--){
+		
+		
+		for (int i=sortedLocations.size()-1; i >= sortedLocations.size() - 100; i--){
 			output.add(sortedLocations.get(i).locId);
 		}
 		/*

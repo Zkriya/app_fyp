@@ -1,5 +1,116 @@
-@(countMap : HashMap[models.db2.Location, Integer])
-@for((loc, value) <- countMap) {
-  <h3>@loc</h3>
-  <h4>@value</h4>
-}
+@(locs : ArrayList[models.db2.Location], vals : ArrayList[Integer], featureCollection : String)
+<!DOCTYPE html>
+		<html>
+				<head>
+				<meta charset=utf-8 />
+				<title>Markers As Links</title>
+				
+				<script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.1/mapbox.js'></script>
+				<link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.1/mapbox.css' rel='stylesheet' />
+				<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")">
+        		<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+         		<script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+        		<link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+   
+				<style>
+				  #map { position:fixed; top:40px; bottom:0;  right:0; width:50%;}
+				  #recommendation {position:absolute; top:40px; left:0; width:100%; background-color:white;}
+				  .locs{height:160px; padding-left:60px}
+				  .locs:hover{ background:#F8F8FF; }
+				  .locs:active { background: #D3D3D3}
+				</style>
+				</head>
+		<body>
+		<div class="topbar">
+            <div class="fill">
+                <div class="container">
+                    <a class="brand" href="@routes.Application.getHome()">Home</a>
+                    <ul class="nav">    
+                    	    <li>
+	                            <a href="@routes.Engine.recommendMe()" id="recommendMe">Recommend me</a>
+	                        </li>
+	                        <li class="active">
+	                            <a href="@routes.Engine.visitedLocations()">Visited locations</a>
+	                        </li>
+							<li>
+		                        <a href="@routes.Application.logout()" id="logOut">Logout</a>
+		                    </li>
+                    </ul>
+                </div>
+            </div>
+    	</div>
+   			<div id='recommendation'>
+   							<div id="slidingDiv">
+   									@for((l, i) <- locs.zipWithIndex){
+   												<div class="wrapper">
+   													<h3 style="position:absolute; padding-left:60px"><a href="@routes.Engine.viewLocation(l.locId)" target="_blank">@{i+1}.@l.name</a></h3>
+													<div class="locs" id="locElement@{i+1}">
+														<div style="width:380px; float:left">
+															<div style="height:40px"><a href="#" ></a></div>
+																<div style="padding-left:2px">
+																	<p>Address : @l.address</p>
+																	<p>Category : @l.categories.split(",")(0)</p>
+																	@if(vals(i)>1){
+																	<p>You visited this location @vals(i) times</p>
+																	}else{
+																	<p>You visited this location @vals(i) time</p>
+																	}
+																	<p></p>
+																</div>
+														</div>
+														<div style="float:left; margin-top:15px; width:150px">
+															@if(!Option(l.photoUrl).isEmpty){
+															<img alt="" src="@l.photoUrl.split(",")(0)" width="130" height="130">
+															}else{
+															<img alt="" src="@routes.Assets.at("images/noImage.jpg")" width="130" height="130" border="1">
+															}
+														</div>
+													</div>
+												</div>
+									}
+									
+							</div>
+					
+					<div id='map'></div>
+				</div>
+		<script>
+		var map = L.mapbox.map('map', 'zkria.h2nkic6a').setView([@locs(0).latitude, @locs(0).longitude], 13);
+		// The GeoJSON representing the two point features
+		var geoJson = @Html(featureCollection);
+		map.markerLayer.setGeoJSON(geoJson);
+		map.scrollWheelZoom.disable();
+		map.markerLayer.on('click', function(e) {
+			 $('html,body').animate({
+     		   scrollTop: $('#locElement' + e.layer.feature.properties.index).offset().top - 100},
+        		'slow');
+		    highlightLink(document.getElementById('locElement' + e.layer.feature.properties.index));
+		});
+		map.featureLayer.eachLayer(function(marker) {
+		 	var element = document.getElementById('locElement' + marker.feature.properties.index);
+		 	element.onclick = function() {
+		 		   highlightLink(document.getElementById('locElement' + marker.feature.properties.index));
+		 		   map.panTo(marker.getLatLng());
+		 	       marker.openPopup();
+		 	      return false;
+		 	     };
+		});
+		
+		var highlightLink = function () {
+			var active = null, colour = '#D9ECF7';
+	        if (this.attachEvent) this.attachEvent('onunload', function () {
+	            active = null;
+	        });
+	        return function (element) {
+	            if ((active != element) && element.style) {
+	                if (active) active.style.backgroundColor = '';
+	                element.style.backgroundColor = colour;
+	                active = element;
+	            }
+	        };
+	    }();
+		
+		</script>
+		
+		
+		</body>
+		</html>
