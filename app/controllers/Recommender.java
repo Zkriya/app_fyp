@@ -12,7 +12,7 @@ public class Recommender {
 	
 	public Recommender(){
 	}
-	public ArrayList<String> run(Integer targetUser){
+	public ArrayList<String> run(Integer targetUser, Short atTime, Integer numberOfRecommendations){
 		List<models.db2.CheckIn> checkIns = models.db2.CheckIn.find.all();
 		HashMap<Integer, HashMap<Location, HashSet<Short>>> allUsers = new HashMap<Integer,HashMap<Location,HashSet<Short>>>();
 		ArrayList<String> output = new ArrayList<String>();
@@ -70,7 +70,6 @@ public class Recommender {
 		}
 		//Part 4 of paper. Spatial influence.
 		//User targetUser = new User("USER_1815");
-		Short atTime = 20;
 		double[] recScoreForLocsSpatial = new double[allLocs.size()];
 		
 		for (int z=0; z < recScoreForLocsSpatial.length; z++){
@@ -162,7 +161,7 @@ public class Recommender {
 		sortedScores.addAll(sortedMap.values());
 		
 		
-		for (int i=sortedLocations.size()-1; i >= sortedLocations.size() - 100; i--){
+		for (int i=sortedLocations.size()-1; i >= sortedLocations.size() - numberOfRecommendations; i--){
 			output.add(sortedLocations.get(i).locId);
 		}
 		/*

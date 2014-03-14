@@ -16,6 +16,8 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.*;
+import play.data.*;
+import static play.data.Form.*; 
 public class Engine extends Controller{
 	public static Result viewLocation(String locId){
 		models.db2.Location location = models.db2.Location.find.byId(locId);
@@ -80,17 +82,24 @@ public class Engine extends Controller{
 		}
 		return ok(visitedLocations.render(locs,vals, featureCollection.toString()));
 	}
-	public static Result recommendMe(Integer numb) throws Exception{
+	public static Result recommendMe() throws Exception{
 		String email = session("email");
 		if(email == null){
 			return redirect(routes.Application.login());
 		}
+		Form<RecommenderForm> recForm = form(RecommenderForm.class).bindFromRequest();
+		Integer numbOfRecommendations = 10;
+		Short timeOfRecommendation = 20;
+		if (recForm != null && recForm.get().numbOfRecs != null && recForm.get().timeOfRec != null){
+			numbOfRecommendations = recForm.get().numbOfRecs;
+		    timeOfRecommendation = recForm.get().timeOfRec;
+		}
 		User user = User.find.where().eq("email", email).findUnique();
 		Recommender eng = new Recommender();
-		ArrayList<String> result = eng.run(user.userId);
+		ArrayList<String> result = eng.run(user.userId, timeOfRecommendation, numbOfRecommendations);
 		List<Location> allLocs = Location.find.all();
 		ArrayList<Location> output = new ArrayList<Location>();
-		for (int i=0; i < numb; i++){
+		for (int i=0; i < numbOfRecommendations; i++){
 			Location loc;
 			for (int j=0; j < allLocs.size(); j++){
 				if (allLocs.get(j).locId.equals(result.get(i))){
@@ -125,7 +134,10 @@ public class Engine extends Controller{
 	            featureList.put(feature);
 	            featureCollection.put("features", featureList);
 			}
-		return ok(map.render(output, featureCollection.toString(),"recommendMe"));
+		return ok(map.render(output, featureCollection.toString(),"recommendMe", timeOfRecommendation, numbOfRecommendations));
 	}
-	
+	public static class RecommenderForm{
+		public Integer numbOfRecs;
+		public Short timeOfRec;
+	}
 }

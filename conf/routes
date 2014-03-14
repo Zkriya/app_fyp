@@ -18,7 +18,7 @@ GET		/home				      	controllers.Application.getHome()
 
 
 #Map and Recommendation
-GET   	/recommendMe				controllers.Engine.recommendMe(numb : Integer ?= 10)
+GET   	/recommendMe				controllers.Engine.recommendMe()
 GET 	/viewLocation/:locId		controllers.Engine.viewLocation(locId: String)
 GET 	/visitedLocations			controllers.Engine.visitedLocations()
 
